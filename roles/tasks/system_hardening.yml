@@ -1,0 +1,31 @@
+---
+  - name: Hardening - ASLR
+    include_tasks: sysharden_ASLR.yml
+
+  - name: Hardening - Enable dnf gpg keys
+    include_tasks: sysharden_enable_dnf_gpgkeys.yml
+
+  - name: Hardening - Configure password strength
+    include_tasks: sysharden_password.yml
+
+  - name: Hardening - Configure SSH
+    include_tasks: sysharden_ssh.yml
+
+  - name: Hardening - Banners
+    include_tasks: sysharden_banners.yml
+
+  - name: Hardening - Login defs
+    include_tasks: sysharden_login_defs.yml
+
+  - name: Hardening - Remove unnecessary packages
+    include_tasks: sysharden_remove_unnecessary_package.yml
+
+  - name: Hardening - Remove unnecessary services
+    include_tasks: sysharden_remove_unnecessary_service.yml
+
+#  - name: Hardening - Disable cpus
+#    include_tasks: sysharden_disable_cups.yml
+
+  - name: Hardening - Set password and group file permission
+    include_tasks: sysharden_passwd_permissioin.yml
+

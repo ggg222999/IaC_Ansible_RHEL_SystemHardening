@@ -1,0 +1,14 @@
+---
+  - name: ....Update all packages
+    dnf:
+      name: '*'
+      state: latest
+    when: "ansible_distribution == 'RedHat'"
+
+  - name: ....Update all packages
+    yum:
+      name: '*'
+      state: latest
+      update_cache: yes
+    when: "ansible_distribution == 'CentOS'"
+

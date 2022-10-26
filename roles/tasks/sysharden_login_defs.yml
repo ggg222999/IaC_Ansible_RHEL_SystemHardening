@@ -1,0 +1,27 @@
+---
+#  - name: 5.5.1.1 - Ensure password expiration is {{ password_expire_days }} days or less
+#    lineinfile:
+#      dest: /etc/login.defs
+#      regexp: '^PASS_MAX_DAYS\s*((?!{{ password_expire_days }}).)*$'
+#      line: "PASS_MAX_DAYS  {{ password_expire_days }}"
+#      state: present
+#    tags:
+#      - 5.5.1.1
+
+#  - name: 5.5.1.2 - Ensure password change days is set to {{ password_min_days }}
+#    lineinfile:
+#      dest: /etc/login.defs
+#      regexp: '^PASS_MIN_DAYS\s*((?!{{ password_min_days }}).)*$'
+#      line: "PASS_MIN_DAYS  {{ password_min_days }}"
+#      state: present
+#    tags:
+#      - 5.5.1.2
+
+#  - name: 5.5.1.3 - Ensure password warning days is set to {{ password_warning_days }}
+#    lineinfile:
+#      dest: /etc/login.defs
+#      regexp: '^PASS_WARN_AGE\s*((?!{{ password_warning_days }}).)*$'
+#      line: "PASS_WARN_AGE  {{ password_warning_days }}"
+#      state: present
+#    tags:
+#      - 5.5.1.3

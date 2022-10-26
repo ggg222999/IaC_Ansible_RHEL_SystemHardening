@@ -1,0 +1,36 @@
+---
+  # Use copy module to copy in the appropriate files based on variable and set permissions
+  - name: 1.8.1.1 - Install motd banners
+    copy:
+      src: motd
+      dest: /etc/motd
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      - 1.8.1.1
+      - 1.8.1.4
+
+  # Use copy module to copy in the appropriate files based on variable and set permissions
+  - name: 1.8.1.2 - Install issue banners
+    copy:
+      src: issue
+      dest: /etc/issue
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      - 1.8.1.2
+      - 1.8.1.5
+
+  # Use copy module to copy in the appropriate files based on variable and set permissions
+  - name: 1.8.1.3 - Install issue.net banners
+    copy:
+      src: issue.net
+      dest: /etc/issue.net
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      - 1.8.1.3
+      - 1.8.1.6

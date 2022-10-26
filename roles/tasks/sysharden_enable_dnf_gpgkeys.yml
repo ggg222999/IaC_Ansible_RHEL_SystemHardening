@@ -1,0 +1,39 @@
+---
+  # GPGKeys are used to sign packages. enabling them will mean that all packages
+  #  from a given repo must be signed with the appropriate key
+  - name: 1.2.[3,4] - Ensure GPG keys are configured
+    block:
+      # Replace any instances of gpgcheck with a 1 after it to 'gpgcheck = 1'
+      - name: 1.2.4 - set master yum.conf gpgcheck to '1'
+        replace:
+          dest: /etc/yum.conf
+          regexp: '^gpgcheck\s*=\s*[^1]*$'
+          replace: "gpgcheck = 1"
+        when: ansible_distribution == "RedHat"
+
+      - name: 1.2.4 - set master dnf.conf gpgcheck to '1'
+        replace:
+          dest: /etc/dnf/dnf.conf
+          regexp: '^gpgcheck\s*=\s*[^1]*$'
+          replace: "gpgcheck=1"
+        when: ansible_distribution == "RedHat"
+
+      # Find all files in /etc/yum.repos.d and add them to a list variable
+      - name: 1.2.4 - find all repo files in /etc/yum.repos.d/
+        find:
+          paths: "/etc/yum.repos.d"
+          patterns: "*.repo"
+        register: yumrepos
+
+      # parse the list variable and replace any instances of gpgcheck with a 1 after it to 'gpgcheck = 1'
+      - name: 1.2.4 - Set all repos gpgchecks to '1'
+        replace:
+          dest: "{{ item.path }}"
+          regexp: '^gpgcheck\s*=\s*[^1]*$'
+          replace: gpgcheck = 1
+        with_items: "{{ yumrepos.files }}"
+    tags:
+      - 1.2.3
+      - 1.2.4
+
+  # Control 1.2.5 is a manual review to ensure repos are configured per site needs

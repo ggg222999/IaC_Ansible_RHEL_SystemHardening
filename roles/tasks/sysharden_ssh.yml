@@ -1,0 +1,200 @@
+  # If you want to deploy your own SSH config file, exclude the entire 5.2.0 tag
+  - name: 5.2 - SSH File configurations
+    block:
+      - name: 5.2.1 - Set permissions on SSH file
+        file:
+          dest: /etc/ssh/sshd_config
+          owner: root
+          group: root
+          mode: 0600
+        tags:
+          - 5.2.1
+
+      # Control 5.2.2, Ensure SSH access is limited is environment dependent
+      # skipping
+
+      - name: 5.2.3 - Set Permissions on ssh private host keys
+        block:
+          - name: 5.2.3 - Find all ssh private host keys
+            find:
+              paths: /etc/ssh
+              file_type: file
+              patterns: ssh_host_*_key
+            register: ssh_host_out
+            changed_when: false
+
+          - name: 5.2.3 - Set permissions on all ssh private host keys (Red Hat set the group to ssh_keys and mode to 640)
+            file:
+              dest: "{{ item.path }}"
+              owner: root
+              group: ssh_keys
+              mode: 0640
+            loop: "{{ ssh_host_out.files }}"
+        tags:
+          - 5.2.3
+
+      - name: 5.2.4 - Set Permissions on ssh public host keys
+        block:
+          - name: 5.2.4 - Find all ssh public host keys
+            find:
+              paths: /etc/ssh
+              file_type: file
+              patterns: ssh_host_*_key.pub
+            register: ssh_hostpub_out
+            changed_when: false
+
+          - name: 5.2.4 - Set permissions on all ssh public host keys
+            file:
+              dest: "{{ item.path }}"
+              owner: root
+              group: root
+              mode: 0644
+            loop: "{{ ssh_hostpub_out.files }}"
+        tags:
+          - 5.2.4
+
+      - name: 5.2.5 - Set SSH LogLevel more verbose, but not debug
+        replace:
+          path: /etc/ssh/sshd_config
+          replace: "LogLevel INFO"
+          regexp: '^LogLevel\s*(QUIET|FATAL|ERROR|DEBUG)*$'
+        notify:  restart sshd
+        tags:
+          - 5.2.5
+
+      # Using replace with a replace argument of "" removes the selected
+      #  text.
+      - name: 5.2.6 - Disable X11 forwarding
+        lineinfile:
+          path: /etc/ssh/sshd_config
+          state: absent
+          regexp: '^X11Forwarding\s*yes'
+        tags:
+          - 5.2.6
+
+      - name: 5.2.7 - Ensure SSH MaxAuthTires is set
+        lineinfile:
+          path: /etc/ssh/sshd_config
+          line: "MaxAuthTries 5"
+          regexp: '^MaxAuthTries\s+[6|5]'
+          insertafter: "^#MaxAuthTries"
+        tags:
+          - 5.2.7
+
+      - name: 5.2.8 - Ensure IgnoreRhosts is set
+        lineinfile:
+          path: /etc/ssh/sshd_config
+          line: "IgnoreRhosts yes"
+          regexp: '^IgnoreRhosts\s*[^y]'
+        tags:
+          - 5.2.8
+
+      - name: 5.2.9 - Ensure HostbasedAuthentication is disabled
+        lineinfile:
+          path: /etc/ssh/sshd_config
+          line: "HostbasedAuthentication no"
+          regexp: '^HostbasedAuthentication\s*[^n]'
+        tags:
+          - 5.2.9
+
+#      - name: 5.2.10 Ensure PermitRootLogin is disbled
+#        lineinfile:
+#          path: /etc/ssh/sshd_config
+#          line: "PermitRootLogin no"
+#          regexp: '^PermitRootLogin\s*[^n]'
+#        tags:
+#          - 5.2.10
+
+      - name: 5.2.11 - Ensure SSH PermitEmptyPasswords is disabled
+        lineinfile:
+          path: /etc/ssh/sshd_config
+          state: absent
+          regexp: '^PermitEmptyPasswords\s*[^n]'
+        tags:
+          - 5.2.11
+
+      - name: 5.2.12 - Ensure PermitUserEnvironment is disabled
+        lineinfile:
+          path: /etc/ssh/sshd_config
+          state: absent
+          regexp: '^PermitUserEnvironment\s*[^n]'
+        tags:
+          - 5.2.12
+
+#      - name: 5.2.13 - Ensure SSH Idle Timeout is configured ClientAliveInterval
+#        lineinfile:
+#          path: /etc/ssh/sshd_config
+#          line: "ClientAliveInterval 0"
+#          regexp: "^ClientAliveInterval 0"
+#          insertafter: "^#ClientAliveInterval"
+#        tags:
+#          - 5.2.13
+
+#      - name: 5.2.13 - Ensure SSH Idle Timeout is configured ClientAliveCountMax
+#        lineinfile:
+#          path: /etc/ssh/sshd_config
+#          line: "ClientAliveCountMax {{ ssh_alive_count_max }}"
+#          regexp: "^ClientAliveCountMax {{ ssh_alive_count_max }}"
+#          insertafter: "^#ClientAliveCountMax"
+#        tags:
+#          - 5.2.13
+
+      - name: 5.2.14 - Ensure SSH LoginGraceTime is set to {{ ssh_grace_time }} or less
+        lineinfile:
+          path: /etc/ssh/sshd_config
+          line: "LoginGraceTime 2m"
+          regexp: "^LoginGraceTime 2m"
+          insertafter: "^#LoginGraceTime"
+        tags:
+          - 5.2.14
+
+#      - name: 5.2.15 - Ensure SSH Banner is configured
+#        lineinfile:
+#          path: "/etc/ssh/sshd_config"
+#          line: "Banner /etc/{{ ssh_login_banner }}"
+#          regexp: "^Banner /etc/{{ ssh_login_banner }}"
+#        tags:
+#          - 5.2.15
+
+      - name: 5.2.16 - Ensure SSH is configured to use PAM
+        lineinfile:
+          path: "/etc/ssh/sshd_config"
+          line: "UsePAM yes"
+          regexp: '^UsePAM\s+[yes|no]'
+        tags:
+          - 5.2.16
+
+      - name: 5.2.17 - Disable TCP Forwarding
+        lineinfile:
+          path: "/etc/ssh/sshd_config"
+          line: "AllowTcpForwarding no"
+          regexp: '^AllowTcpForwarding\s+(yes|no)'
+          insertafter: "^#AllowTcpForwarding"
+        tags:
+          - 5.2.17
+
+      - name: 5.2.18 - Limit max unauthenticated startups
+        lineinfile:
+          path: "/etc/ssh/sshd_config"
+          line: "maxstartups 10:30:60"
+          regexp: '^maxstartups\s+10:30:60'
+        tags:
+          - 5.2.18
+
+#      - name: 5.2.18 - Limit max sessions
+#        lineinfile:
+#          path: "/etc/ssh/sshd_config"
+#          line: "maxsessions {{ ssh_max_sessions }}"
+#          regexp: '^maxsessions\s+[{{ ssh_max_sessions }}]'
+#        tags:
+#          - 5.2.18
+
+      - name: 5.2.19 - Ensure system crypto policy isn't overriden in SSH
+        lineinfile:
+          path: "/etc/ssh/sshd_config"
+          state: absent
+          regexp: '^\s*(CRYPTO_POLICY\s*=.*)$'
+        tags:
+          - 5.2.19
+    tags:
+      - 5.2.0

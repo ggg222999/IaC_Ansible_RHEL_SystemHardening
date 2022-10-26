@@ -1,0 +1,102 @@
+---
+ ### Part 2, Services ###
+  # Remove old, unused, insecure services
+  - name: 2.1.1 - Remove xinetd service
+    dnf:
+      name: xinetd
+      state: absent
+    when: tftp_server is defined and not tftp_server
+
+    tags:
+      - 2.1.1
+
+  # RHEL 8 does not distribute ntp any longer, so we are not using the time_server
+  #  variable for RHEL8 controls
+  - name: 2.2.1.1 - Verify chrony is  installed
+    dnf:
+      name: "chrony"
+      state: present
+    tags:
+      - 2.2.1.1
+
+  # Use the template module to deploy the config file for the time sync program
+  #  The default file does not have any template variables, but it's there so
+  #  they can be added in the future.
+#  - name: 2.2.1.2 - Configure chrony
+#    template:
+#      src: "chrony.conf"
+#      dest: /etc/chrony.conf
+#      owner: root
+#      group: root
+#      mode: 0644
+#    tags:
+#      - 2.2.1.2
+
+#  - name: 2.2.1.3 - configure sysconfig time_server options
+#    template:
+#      src: "{{ time_service }}d"
+#      dest: /etc/sysconfig/{{ time_service }}d
+#      owner: root
+#      group: root
+#      mode: 0644
+#    tags:
+#      - 2.2.1.3
+
+  - name: 2.2.2 - disable display manager if graphical desktop not needed
+    block:
+      # Find the current default run level. The systemctl module does not handle the
+      #  get-default routine, so we are looking at the target of the symlink at /etc/systemd/system/default.target
+      - name: 2.2.2 - get default runlevel
+        stat:
+          path: /etc/systemd/system/default.target
+        register: default_runlevel_out
+        tags:
+          - 2.2.2
+
+      # Use systemd module to stop the GDM service
+#      - name: 2.2.2 - Disable the gdm display manager
+#        systemd:
+#          name: gdm
+#          enabled: no
+#          masked: yes
+#          state: stopped
+#          daemon-reload: yes
+#        tags:
+#          - 2.2.2
+
+      # Set the current run level. The systemctl module does not handle the
+      #  get-default routine, so we are looking at the target of the symlink at /etc/systemd/system/default.target
+#      - name: 2.2.2 - Set current runlevel (non graphical)
+#        command: /usr/bin/systemctl isolate multi-user.target
+#        register: isolate_out
+#        changed_when: isolate_out.changed
+#        when: default_runlevel_out.stat.lnk_target is search("graphical.target") and not graphical_interface
+#        tags:
+#          - 2.2.2
+
+#      - name: 2.2.2 - Set current runlevel (graphical)
+#        command: /usr/bin/systemctl isolate graphical.target
+#        register: isolate_out
+#        changed_when: isolate_out.changed
+#        when: default_runlevel_out.stat.lnk_target is search("multi-user.target") and graphical_interface
+#        tags:
+#          - 2.2.2
+
+      # Set the default run level. We are doing it the hard way since systemctl doesn't handle set-default
+#      - name: 2.2.2 - Set default runlevel (non graphical)
+#        file:
+#          src: /lib/systemd/system/multi-user.target
+#          dest: /etc/systemd/system/default.target
+#          owner: root
+#          group: root
+#        when: not graphical_interface
+
+#      - name: 2.2.2 - Set default runlevel (graphical)
+#        file:
+#          src: /lib/systemd/system/graphical.target
+#          dest: /etc/systemd/system/default.target
+#          owner: root
+#          group: root
+#        when: graphical_interface
+#    tags:
+#      - 2.2.2

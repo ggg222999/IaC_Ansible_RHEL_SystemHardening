@@ -1,0 +1,22 @@
+[admin]
+abcxxxxxxx ansible_host=10.1.1.1
+
+
+
+[cluster:children]
+admin
+
+
+[all:vars]
+uninstall='yes'
+add_admin='no'
+
+# ansible parameter
+ansible_python_interpreter=/usr/bin/python
+ansible_user=root
+ansible_password=xxxxxxx
+
+# proxy
+http_proxy=http://xxxxxxx
+https_proxy=http://xxxxxxx
+

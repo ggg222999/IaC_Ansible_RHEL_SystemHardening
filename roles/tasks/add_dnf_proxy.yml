@@ -1,0 +1,13 @@
+---
+  - name: remove proxy
+    lineinfile:
+      path: /etc/dnf/dnf.conf
+      state: absent
+      regexp: 'proxy'
+
+  - name: add dnf proxy
+    lineinfile:
+      path: /etc/dnf/dnf.conf
+      insertafter: '^skip_if_unavailable'
+      line: 'proxy={{ http_proxy }}'
+      state: present

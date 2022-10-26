@@ -1,0 +1,10 @@
+---
+  - name: remove dnf proxy from dnf config
+    lineinfile:
+      dest: /etc/dnf/dnf.conf
+      regexp: "^proxy"
+      line: "#proxy"
+      state: present
+      backup: yes
+
+  

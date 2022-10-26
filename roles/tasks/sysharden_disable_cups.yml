@@ -1,0 +1,14 @@
+---
+  # Cups should be remove per control 2.2.16, but it may not be able to due to
+  #  dependencies, so disable the service instead
+  - name: 2.2.16 - Disable cups as we my not be able to uninstall it
+    service:
+      name: "{{ item }}"
+      enabled: no
+      state: stopped
+    loop:
+      - cups.service
+      - cups.socket
+      - cups-browsed.service
+    tags:
+      - 2.2.16

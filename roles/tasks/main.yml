@@ -1,0 +1,30 @@
+---
+  - name: Redhat subscription registration if Redhat Linux server
+    include_tasks: redhat-register.yml
+    tags: redhat_registration
+
+  - name: Use proxy for dnf
+    include_tasks: add_dnf_proxy.yml
+    tags: add_dnf_proxy
+
+  - name: Hardening system
+    include_tasks: system_hardening.yml
+    tags: sysharden
+
+  - name: Update system
+    include_tasks: update_system.yml
+    tags: system_update
+
+  - name: Redhat subscription un-registration if Redhat Linux server
+    include_tasks: redhat-unregister.yml
+    tags: redhat_unregistration
+
+  - name: Remove dnf proxy
+    include_tasks: remove_dnf_proxy.yml
+    tags: remove_dnf_proxy
+
+  - name: Reboot the system
+    include_tasks: reboot_system.yml
+    tags: reboot_system
+
+

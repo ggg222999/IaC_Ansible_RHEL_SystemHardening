@@ -1,0 +1,63 @@
+# VM info
+vms:
+  - type: node01
+    name: xxxxxxx
+    hostname: xxxxxxx
+    vm_group: xxxxxxx
+    datastore: xxxxxxx
+    folder: "xxxxxxx"
+    network_name: xxxxxxx
+    vlan: 111
+    dvswitch: xxxxxxx
+    ip: 10.1.1.1
+    netmask: 255.255.255.0
+    gateway: 10.1.1.123
+    ram: 81920
+    cpu: 10
+
+
+#VM ESXi information
+vcenters:
+  vcenter_hostname: xxxxxxx.test.com
+  cluster: xxxxxxx
+  datacenter_name: xxxxxxx
+  rhel_template: CentOS-7-image
+
+# live cluster deploy
+hws:
+   vm_password: gold
+   devicetype: vmxnet3
+   domain: xxxxxxx
+   dns1: 10.1.1.1
+   dns2: 10.1.1.2
+   disk_type: thin
+   disk_state: present
+   disk_controller: 1
+   disk_unit_number: 2
+   disk_scsi_type: lsilogic
+   disk2_size: 40
+   disk3_size: 10
+   disk4_size: 100
+
+
+# User group info
+usergroups:
+  - type: usergroup
+    name: xxxxxxx
+    gid: 1003
+    state: present
+
+# User info
+users:
+  - type: user
+    name: xxxxxxx
+    uid: 1002
+    password: $6byDFnWqX6rZ2baFP1Dzl/
+    group: xxxxxxx
+    groups: ""
+    state: present
+    shell: /bin/bash
+    system: no
+    createhome: yes 
+    home: /home/xxxxxxx
+

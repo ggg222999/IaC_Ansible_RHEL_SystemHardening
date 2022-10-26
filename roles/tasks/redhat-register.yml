@@ -1,0 +1,5 @@
+---
+  - name: Redhat Subscription Online Registration 
+    shell: /usr/sbin/subscription-manager register --force --proxy {{ http_proxy }} --proxyuser {{ PROXYUSER }} --proxypassword {{ PROXYPASSWORD }}  --org {{ 11539436 }} --activationkey {{ rhreg.activationkey_rhel8 }}
+    when: "ansible_distribution == 'RedHat'"
+    register: redhat_subscription_registration
